@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro Exam Builder Portal</title>
+
+<script>
+  window.MathJax = {
+    loader: {load: ['[tex]/mhchem']},
+    tex: {packages: {'[+]': ['mhchem']}}
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --danger: #ef4444;
+  --danger-hover: #dc2828;
+  --success: #10b981;
+  --success-hover: #059669;
+  --warning: #f59e0b;
+  --radius: 12px;
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 40px 20px; line-height: 1.5; }
+.container { max-width: 1000px; margin: 0 auto; }
+
+/* Headers & Text */
+.text-center { text-align: center; }
+h1 { font-size: 2rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 16px; border-bottom: 2px solid var(--border); padding-bottom: 8px;}
+
+/* Layout Cards */
+.card { background: var(--card); padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 30px; border: 1px solid var(--border); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+/* Forms */
+.form-group { margin-bottom: 20px; }
+label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: #334155; }
+input[type=text], input[type=number], input[type=date], textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-family: inherit; font-size: 1rem; transition: border-color 0.2s; }
+input[type=text]:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+textarea { resize: vertical; min-height: 100px; }
+
+/* Options Editor */
+.options-editor { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+.option-row { display: flex; align-items: center; gap: 15px; background: #f8fafc; padding: 10px 15px; border: 1px solid var(--border); border-radius: 8px; }
+.option-row input[type=radio] { accent-color: var(--success); width: 20px; height: 20px; cursor: pointer; flex-shrink: 0; }
+.option-row input[type=text] { flex-grow: 1; }
+
+/* NEW MATH TOOLBAR CSS */
+.math-toolbar { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 24px; }
+.toolbar-section { margin-bottom: 16px; }
+.toolbar-section summary { font-weight: 700; font-size: 15px; color: #475569; cursor: pointer; padding: 8px 0; outline: none; display: flex; align-items: center; gap: 8px; user-select: none; }
+.toolbar-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.math-btn { background: #fff; border: 1px solid #cbd5e1; padding: 8px 14px; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 600; transition: all 0.2s; white-space: nowrap; font-family: 'Courier New', Courier, monospace; color: var(--text);}
+.math-btn:hover { background: #eef2ff; border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; font-size: 1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-success { background: var(--success); color: #fff; }
+.btn-success:hover { background: var(--success-hover); }
+.btn-danger { background: var(--danger); color: white; padding: 6px 12px; font-size: 0.85rem;}
+.btn-danger:hover { background: var(--danger-hover); }
+.btn-warning { background: var(--warning); color: white; padding: 6px 12px; font-size: 0.85rem;}
+.btn-generate { width: 100%; font-size: 1.2rem; padding: 18px; margin-top: 20px; }
+
+/* Preview List */
+#previewArea { display: flex; flex-direction: column; gap: 20px; }
+.preview-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 20px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid var(--success); }
+.preview-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+.q-number { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-right: 10px; }
+.preview-text { font-size: 1.05rem; flex-grow: 1; }
+.preview-actions { display: flex; gap: 10px; }
+.preview-options { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 15px; }
+.preview-opt { padding: 10px; border: 1px solid var(--border); border-radius: 6px; background: #f8fafc; font-size: 0.95rem; }
+.preview-opt.correct-ans { background: #d1fae5; border-color: #10b981; font-weight: 600; color: #065f46; }
+
+.hidden { display: none !important; }
+.empty-state { text-align: center; padding: 40px; color: var(--text-muted); background: #f1f5f9; border-radius: 8px; border: 2px dashed var(--border); margin-bottom: 20px;}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="card text-center">
+    <h1>Professional Exam Builder</h1>
+    <p>Create beautiful exams with full support for advanced Math, Chemistry, and Fractions.</p>
+  </div>
+
+  <div class="card">
+    <h2>1. Exam Details</h2>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Exam Name</label>
+        <input type="text" id="examName" placeholder="e.g. Final Calculus Exam" value="Advanced Mathematics Assessment">
+      </div>
+      <div class="form-group">
+        <label>Duration (Minutes)</label>
+        <input type="number" id="examTime" placeholder="e.g. 30" value="30">
+      </div>
+      <div class="form-group">
+        <label>Exam Date</label>
+        <input type="date" id="examDate">
+      </div>
+      <div class="form-group">
+        <label>Submission Deadline</label>
+        <input type="date" id="examDeadline">
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="editorCard">
+    <h2 id="editorTitle">2. Add a Question</h2>
+    
+    <div class="math-toolbar">
+        <details class="toolbar-section" open>
+            <summary>🔢 Powers &amp; Indices</summary>
+            <div class="toolbar-grid">
+                <button type="button" class="math-btn" onclick="insertSuperscript()">x² (superscript)</button>
+                <button type="button" class="math-btn" onclick="insertSubscript()">x₂ (subscript)</button>
+                <button type="button" class="math-btn" onclick="insertConstSuperscript()">Cⁿ</button>
+                <button type="button" class="math-btn" onclick="insertConstSubscript()">Cₙ</button>
+                <button type="button" class="math-btn" onclick="insertSuperSub()">x²₃</button>
+                <button type="button" class="math-btn" onclick="insertInverse()">x⁻¹</button>
+                <button type="button" class="math-btn" onclick="insertNegativePower()">x⁻ⁿ</button>
+            </div>
+        </details>
+        <details class="toolbar-section">
+            <summary>📏 Fractions &amp; Roots</summary>
+            <div class="toolbar-grid">
+                <button type="button" class="math-btn" onclick="insertFraction()">a/b (fraction)</button>
+                <button type="button" class="math-btn" onclick="insertSqrt()">√ (square root)</button>
+                <button type="button" class="math-btn" onclick="insertNthRoot()">ⁿ√ (nth root)</button>
+                <button type="button" class="math-btn" onclick="insertBinomial()">(n k)</button>
+                <button type="button" class="math-btn" onclick="insertLeftRightBrackets()">adaptive brackets</button>
+            </div>
+        </details>
+        <details class="toolbar-section">
+            <summary>📐 Functions &amp; Limits</summary>
+            <div class="toolbar-grid">
+                <button type="button" class="math-btn" onclick="insertFunction('\\sin')">sin</button>
+                <button type="button" class="math-btn" onclick="insertFunction('\\cos')">cos</button>
+                <button type="button" class="math-btn" onclick="insertFunction('\\tan')">tan</button>
+                <button type="button" class="math-btn" onclick="insertFunction('\\log')">log</button>
+                <button type="button" class="math-btn" onclick="insertFunction('\\ln')">ln</button>
+                <button type="button" class="math-btn" onclick="insertLimit()">lim x→</button>
+                <button type="button" class="math-btn" onclick="insertFunction('\\det')">det</button>
+                <button type="button" class="math-btn" onclick="insertFunction('\\gcd')">gcd</button>
+            </div>
+        </details>
+        <details class="toolbar-section">
+            <summary>∫ Calculus &amp; Sums</summary>
+            <div class="toolbar-grid">
+                <button type="button" class="math-btn" onclick="insertIntegral()">∫</button>
+                <button type="button" class="math-btn" onclick="insertDoubleIntegral()">∬</button>
+                <button type="button" class="math-btn" onclick="insertTripleIntegral()">∭</button>
+                <button type="button" class="math-btn" onclick="insertSum()">∑</button>
+                <button type="button" class="math-btn" onclick="insertProduct()">∏</button>
+                <button type="button" class="math-btn" onclick="insertDerivative()">dy/dx</button>
+                <button type="button" class="math-btn" onclick="insertPartialDeriv()">∂/∂x</button>
+            </div>
+        </details>
+        <details class="toolbar-section">
+            <summary>↗️ Vectors &amp; Accents</summary>
+            <div class="toolbar-grid">
+                <button type="button" class="math-btn" onclick="insertVec()">F⃗</button>
+                <button type="button" class="math-btn" onclick="insertHat()">x̂</button>
+                <button type="button" class="math-btn" onclick="insertDot()">ẋ</button>
+                <button type="button" class="math-btn" onclick="insertDDot()">ẍ</button>
+                <button type="button" class="math-btn" onclick="insertBar()">x̄</button>
+                <button type="button" class="math-btn" onclick="insertOverline()">x̅</button>
+            </div>
+        </details>
+        <details class="toolbar-section">
+            <summary>🧪 Chemistry Arrows</summary>
+            <div class="toolbar-grid">
+                <button type="button" class="math-btn" onclick="insertChemArrow('->')">→ irreversible</button>
+                <button type="button" class="math-btn" onclick="insertChemArrow('<=>')">⇌ equilibrium</button>
+                <button type="button" class="math-btn" onclick="insertChemArrow('<-')">← reverse</button>
+                <button type="button" class="math-btn" onclick="insertMathArrow('\\rightarrow')">→ (math)</button>
+                <button type="button" class="math-btn" onclick="insertMathArrow('\\rightleftharpoons')">⇌ (math)</button>
+            </div>
+        </details>
+        <details class="toolbar-section">
+            <summary>🔤 Greek &amp; Symbols</summary>
+            <div class="toolbar-grid">
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\alpha')">α</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\beta')">β</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\gamma')">γ</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\theta')">θ</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\pi')">π</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\infty')">∞</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\pm')">±</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\times')">×</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\div')">÷</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\leq')">≤</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\geq')">≥</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\neq')">≠</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\partial')">∂</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\nabla')">∇</button>
+                <button type="button" class="math-btn" onclick="insertSymbolAtCursor('\\hbar')">ℏ</button>
+            </div>
+        </details>
+    </div>
+
+    <div class="form-group">
+      <label>Question Text (Click a box below, then use the keyboard above to insert Math)</label>
+      <textarea id="qTextInput" placeholder="Enter your question..."></textarea>
+    </div>
+    <div class="form-group">
+      <label>Image URL (Optional)</label>
+      <input type="text" id="qImageInput" placeholder="https://example.com/image.png">
+    </div>
+    
+    <label>Options (Select the correct answer via the radio button)</label>
+    <div class="options-editor">
+      <div class="option-row">
+        <input type="radio" name="correctOpt" value="0" checked>
+        <input type="text" id="opt0Input" placeholder="Option A" required>
+      </div>
+      <div class="option-row">
+        <input type="radio" name="correctOpt" value="1">
+        <input type="text" id="opt1Input" placeholder="Option B" required>
+      </div>
+      <div class="option-row">
+        <input type="radio" name="correctOpt" value="2">
+        <input type="text" id="opt2Input" placeholder="Option C" required>
+      </div>
+      <div class="option-row">
+        <input type="radio" name="correctOpt" value="3">
+        <input type="text" id="opt3Input" placeholder="Option D" required>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; display: flex; gap: 10px;">
+      <button type="button" class="btn btn-success" onclick="saveQuestion()">Save Question to List</button>
+      <button type="button" class="btn btn-warning hidden" id="cancelEditBtn" onclick="cancelEdit()">Cancel Edit</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3. Exam Web View (Preview)</h2>
+    <div class="empty-state" id="emptyState">No questions added yet. Add a question above to see it previewed here.</div>
+    <div id="previewArea"></div>
+  </div>
+
+  <button type="button" class="btn btn-primary btn-generate" onclick="generateExam()">Generate Final Exam Portal File</button>
+</div>
+
+<script>
+  // App State
+  let questionsList = [];
+  let editingIndex = -1;
+  let activeInput = null;
+  let mathJaxPromise = Promise.resolve();
+
+  // Robust Focus Tracker
+  document.addEventListener('focusin', function(e) {
+    if(e.target.tagName === 'TEXTAREA' || (e.target.tagName === 'INPUT' && e.target.type === 'text')) {
+      activeInput = e.target;
+    }
+  });
+
+  // Prevents math buttons and accordions from stealing focus away from the input boxes
+  document.querySelectorAll('.math-btn, .toolbar-section summary').forEach(el => {
+    el.addEventListener('mousedown', function(e) {
+      e.preventDefault(); 
+    });
+  });
+
+  // ---------- ADVANCED TOOLBAR INSERTION HELPERS ----------
+  function insertAtCursor(text, cursorOffsetFromStart) {
+    if (!activeInput) {
+        activeInput = document.getElementById('qTextInput'); // Fallback
+    }
+    const input = activeInput;
+    const start = input.selectionStart || 0;
+    const end = input.selectionEnd || 0;
+    const before = input.value.substring(0, start);
+    const after = input.value.substring(end);
+    input.value = before + text + after;
+    const cursorPos = start + cursorOffsetFromStart;
+    input.selectionStart = input.selectionEnd = cursorPos;
+    input.focus();
+  }
+
+  function insertSymbolAtCursor(symbol) {
+    if (!activeInput) {
+        activeInput = document.getElementById('qTextInput'); // Fallback
+    }
+    const input = activeInput;
+    const start = input.selectionStart || 0;
+    const end = input.selectionEnd || 0;
+    const before = input.value.substring(0, start);
+    const after = input.value.substring(end);
+    input.value = before + symbol + after;
+    input.selectionStart = input.selectionEnd = start + symbol.length;
+    input.focus();
+  }
+
+  window.insertSuperscript = () => insertAtCursor('\\( x^{} \\)', 4);
+  window.insertSubscript = () => insertAtCursor('\\( x_{} \\)', 4);
+  window.insertConstSuperscript = () => insertAtCursor('\\( C^{} \\)', 4);
+  window.insertConstSubscript = () => insertAtCursor('\\( C_{} \\)', 4);
+  window.insertSuperSub = () => insertAtCursor('\\( x_{}^{} \\)', 4);
+  window.insertInverse = () => insertAtCursor('\\( x^{-1} \\)', 4);
+  window.insertNegativePower = () => insertAtCursor('\\( x^{-} \\)', 4);
+
+  window.insertFraction = () => insertAtCursor('\\( \\frac{}{} \\)', 8);
+  window.insertSqrt = () => insertAtCursor('\\( \\sqrt{} \\)', 7);
+  window.insertNthRoot = () => insertAtCursor('\\( \\sqrt[n]{} \\)', 9);
+  window.insertBinomial = () => insertAtCursor('\\( \\binom{}{} \\)', 9);
+  window.insertLeftRightBrackets = () => insertAtCursor('\\( \\left( \\right) \\)', 8);
+
+  window.insertFunction = function(func) {
+      if (['\\sin', '\\cos', '\\tan', '\\log', '\\ln', '\\det', '\\gcd'].includes(func)) {
+          insertAtCursor('\\( ' + func + '{} \\)', func.length + 2);
+      } else {
+          insertAtCursor('\\( ' + func + ' \\)', func.length + 1);
+      }
+  };
+  window.insertLimit = () => insertAtCursor('\\( \\lim_{x \\to }{} \\)', 12);
+
+  window.insertIntegral = () => insertAtCursor('\\( \\int_{}^{} \\)', 12);
+  window.insertDoubleIntegral = () => insertAtCursor('\\( \\iint \\)', 6);
+  window.insertTripleIntegral = () => insertAtCursor('\\( \\iiint \\)', 7);
+  window.insertSum = () => insertAtCursor('\\( \\sum_{}^{} \\)', 12);
+  window.insertProduct = () => insertAtCursor('\\( \\prod_{}^{} \\)', 13);
+  window.insertDerivative = () => insertAtCursor('\\( \\frac{d}{dx} \\)', 8);
+  window.insertPartialDeriv = () => insertAtCursor('\\( \\frac{\\partial}{\\partial x} \\)', 20);
+
+  window.insertVec = () => insertAtCursor('\\( \\vec{} \\)', 5);
+  window.insertHat = () => insertAtCursor('\\( \\hat{} \\)', 5);
+  window.insertDot = () => insertAtCursor('\\( \\dot{} \\)', 5);
+  window.insertDDot = () => insertAtCursor('\\( \\ddot{} \\)', 6);
+  window.insertBar = () => insertAtCursor('\\( \\bar{} \\)', 5);
+  window.insertOverline = () => insertAtCursor('\\( \\overline{} \\)', 11);
+
+  window.insertChemArrow = function(type) {
+      let arrow;
+      if (type === '->') arrow = '->';
+      else if (type === '<=>') arrow = '<=>';
+      else arrow = '<-';
+      insertAtCursor('\\( \\ce{' + arrow + '} \\)', 5);
+  };
+  window.insertMathArrow = function(arrow) {
+      insertAtCursor('\\( ' + arrow + ' \\)', arrow.length + 1);
+  };
+
+  // Default dates for the form
+  document.getElementById('examDate').valueAsDate = new Date();
+  document.getElementById('examDeadline').valueAsDate = new Date();
+
+  function saveQuestion() {
+    const qText = document.getElementById('qTextInput').value;
+    const qImg = document.getElementById('qImageInput').value;
+    const opts = [
+      document.getElementById('opt0Input').value,
+      document.getElementById('opt1Input').value,
+      document.getElementById('opt2Input').value,
+      document.getElementById('opt3Input').value
+    ];
+    
+    const checkedOpt = document.querySelector('input[name="correctOpt"]:checked');
+    const correctAns = checkedOpt ? parseInt(checkedOpt.value) : 0;
+
+    if (qText.trim() === '' && qImg.trim() === '') {
+      alert("Please enter a question or image URL.");
+      return;
+    }
+    for (let opt of opts) {
+      if (opt.trim() === '') {
+        alert("Please fill in all option fields.");
+        return;
+      }
+    }
+
+    const newQuestion = { q: qText, img: qImg, opts: opts, ans: correctAns };
+
+    if (editingIndex > -1) {
+      questionsList[editingIndex] = newQuestion;
+      editingIndex = -1;
+      document.getElementById('editorTitle').innerText = "2. Add a Question";
+      document.getElementById('cancelEditBtn').classList.add('hidden');
+    } else {
+      questionsList.push(newQuestion);
+    }
+
+    clearEditor();
+    renderPreview();
+  }
+
+  function editQuestion(index) {
+    const q = questionsList[index];
+    document.getElementById('qTextInput').value = q.q;
+    document.getElementById('qImageInput').value = q.img;
+    document.getElementById('opt0Input').value = q.opts[0];
+    document.getElementById('opt1Input').value = q.opts[1];
+    document.getElementById('opt2Input').value = q.opts[2];
+    document.getElementById('opt3Input').value = q.opts[3];
+    document.querySelector(`input[name="correctOpt"][value="${q.ans}"]`).checked = true;
+
+    editingIndex = index;
+    document.getElementById('editorTitle').innerText = `Editing Question ${index + 1}`;
+    document.getElementById('cancelEditBtn').classList.remove('hidden');
+    document.getElementById('editorCard').scrollIntoView({ behavior: 'smooth' });
+    activeInput = document.getElementById('qTextInput'); 
+  }
+
+  function cancelEdit() {
+    editingIndex = -1;
+    document.getElementById('editorTitle').innerText = "2. Add a Question";
+    document.getElementById('cancelEditBtn').classList.add('hidden');
+    clearEditor();
+  }
+
+  function deleteQuestion(index) {
+    if(confirm(`Are you sure you want to delete Question ${index + 1}?`)) {
+      questionsList.splice(index, 1);
+      if (editingIndex === index) {
+          cancelEdit();
+      } else if (editingIndex > index) {
+          editingIndex--;
+      }
+      renderPreview();
+    }
+  }
+
+  function clearEditor() {
+    document.getElementById('qTextInput').value = '';
+    document.getElementById('qImageInput').value = '';
+    document.getElementById('opt0Input').value = '';
+    document.getElementById('opt1Input').value = '';
+    document.getElementById('opt2Input').value = '';
+    document.getElementById('opt3Input').value = '';
+    document.querySelector('input[name="correctOpt"][value="0"]').checked = true;
+    activeInput = document.getElementById('qTextInput'); 
+  }
+
+  function renderPreview() {
+    const container = document.getElementById('previewArea');
+    const emptyState = document.getElementById('emptyState');
+    
+    if (questionsList.length === 0) {
+      emptyState.classList.remove('hidden');
+      container.innerHTML = '';
+      return;
+    }
+
+    emptyState.classList.add('hidden');
+    container.innerHTML = '';
+
+    questionsList.forEach((q, index) => {
+      let imageHtml = q.img ? `<br><img src="${q.img}" style="max-width:100%; border-radius:8px; margin-top:10px;">` : '';
+      
+      let optionsHtml = q.opts.map((opt, i) => {
+        let isCorrect = i === q.ans ? 'correct-ans' : '';
+        let label = i === q.ans ? '(Correct Answer)' : '';
+        return `<div class="preview-opt ${isCorrect}"><strong>${String.fromCharCode(65+i)}.</strong> ${opt} ${label}</div>`;
+      }).join('');
+
+      const card = document.createElement('div');
+      card.className = 'preview-card';
+      card.innerHTML = `
+        <div class="preview-header">
+          <div class="preview-text"><span class="q-number">Q${index + 1}.</span> ${q.q} ${imageHtml}</div>
+          <div class="preview-actions">
+            <button type="button" class="btn btn-warning" onclick="editQuestion(${index})">Edit</button>
+            <button type="button" class="btn btn-danger" onclick="deleteQuestion(${index})">Delete</button>
+          </div>
+        </div>
+        <div class="preview-options">
+          ${optionsHtml}
+        </div>
+      `;
+      container.appendChild(card);
+    });
+
+    if (window.MathJax) {
+      mathJaxPromise = mathJaxPromise.then(() => {
+        MathJax.typesetClear();
+        return MathJax.typesetPromise();
+      }).catch((err) => console.log('MathJax error:', err));
+    }
+  }
+
+  function generateExam() {
+    if (questionsList.length === 0) {
+      alert("Please add at least one question before generating the exam.");
+      return;
+    }
+
+    const name = document.getElementById('examName').value || 'Online Exam';
+    const time = parseInt(document.getElementById('examTime').value) || 30;
+    const date = document.getElementById('examDate').value || 'Not specified';
+    const deadline = document.getElementById('examDeadline').value || 'Not specified';
+
+    const finalQuestions = questionsList.map(q => {
+      let finalQText = q.q;
+      if (q.img.trim() !== '') {
+        finalQText += `<br><br><img src="${q.img}" style="max-width:100%; border-radius:8px; border:1px solid #e5e7eb;">`;
+      }
+      return { q: finalQText, opts: q.opts, ans: q.ans };
+    });
+
+    const questionsJSON = JSON.stringify(finalQuestions, null, 2);
+    const totalTimeSeconds = time * 60;
+
+    const studentTemplate = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${name}</title>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"><\/script>
+<script>
+  window.MathJax = {
+    loader: {load: ['[tex]/mhchem']},
+    tex: {packages: {'[+]': ['mhchem']}}
+  };
+<\/script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>
+<style>
+:root { --primary: #4f46e5; --primary-dark: #3730a3; --primary-light: #eef2ff; --success: #059669; --success-light: #d1fae5; --error: #dc2626; --error-light: #fee2e2; --warning: #d97706; --warning-light: #fef3c7; --text: #111827; --text-muted: #6b7280; --border: #e5e7eb; --bg: #f9fafb; --card: #ffffff; --radius: 12px; --radius-sm: 8px; --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06); --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px 16px;}
+h1,h2,h3{font-weight:600;} .page{max-width:680px;margin:0 auto;}
+.exam-header{text-align:center;margin-bottom:32px;padding:32px 24px;background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);}
+.exam-logo{width:52px;height:52px;background:var(--primary-light);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
+.exam-logo svg{width:26px;height:26px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.exam-header h1{font-size:1.5rem;color:var(--text);margin-bottom:6px;} .exam-header p{font-size:0.875rem;color:var(--text-muted);}
+.status-pill{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:20px;padding:5px 14px;font-size:0.78rem;color:#15803d;font-weight:500;margin-top:12px;}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:blink 2s infinite;} @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:28px 28px;margin-bottom:20px;}
+.card-title{font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.card-title svg{width:18px;height:18px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.step-badge{background:var(--primary);color:#fff;font-size:0.7rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:auto;}
+label{display:block;font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:6px;} .required{color:var(--error);margin-left:2px;}
+.input-wrap{position:relative;} .input-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:var(--text-muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;transition:stroke 0.2s;}
+.input-wrap:focus-within .input-icon{stroke:var(--primary);}
+select,input[type=text],input[type=number],input[type=password]{width:100%;padding:11px 12px 11px 40px;font-size:0.9rem;font-family:inherit;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:#fafafa;color:var(--text);outline:none;transition:border-color 0.2s,box-shadow 0.2s,background 0.2s;-webkit-appearance:none;appearance:none;}
+select:focus,input:focus{border-color:var(--primary);background:#fff;box-shadow:0 0 0 3px rgba(79,70,229,0.1);}
+input[readonly]{background:#f3f4f6;color:var(--text-muted);cursor:not-allowed;} .select-chevron{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;width:16px;height:16px;stroke:var(--text-muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.form-group{margin-bottom:18px;} #pinInput{letter-spacing:0.2em;font-weight:600;font-size:1.1rem;} .pin-hint{font-size:0.78rem;color:var(--text-muted);margin-top:5px;}
+.pin-error{font-size:0.78rem;color:var(--error);margin-top:5px;display:none;} .pin-error.show{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;font-size:0.9rem;font-weight:600;font-family:inherit;border:none;border-radius:var(--radius-sm);cursor:pointer;transition:all 0.2s;letter-spacing:0.01em;}
+.btn-primary{background:var(--primary);color:#fff;width:100%;} .btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.btn-primary:disabled{background:#a5b4fc;cursor:not-allowed;transform:none;box-shadow:none;} .btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.spinner{display:none;width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;}
+.btn.loading .spinner{display:block;} .btn.loading .btn-label{display:none;} .btn.loading .btn-icon{display:none;} @keyframes spin{to{transform:rotate(360deg);}}
+.info-banner{display:flex;align-items:center;gap:10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-sm);padding:12px 16px;font-size:0.85rem;color:#15803d;font-weight:500;margin-bottom:20px;}
+.info-banner svg{width:18px;height:18px;flex-shrink:0;stroke:#16a34a;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.timer-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 18px;margin-bottom:20px;box-shadow:var(--shadow);}
+.timer-label{font-size:0.82rem;color:var(--text-muted);font-weight:500;} .timer-val{font-size:1.1rem;font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums;}
+.timer-val.warn{color:var(--warning);} .timer-val.danger{color:var(--error);} .progress-track{flex:1;height:6px;background:var(--border);border-radius:3px;margin:0 16px;overflow:hidden;}
+.progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width 1s linear,background 0.3s;} .progress-fill.warn{background:var(--warning);} .progress-fill.danger{background:var(--error);}
+.question-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:22px 24px;margin-bottom:14px;transition:box-shadow 0.2s;}
+.question-card:hover{box-shadow:var(--shadow-md);} .q-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
+.q-num{width:30px;height:30px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--primary);flex-shrink:0;}
+.q-text{font-size:0.92rem;font-weight:500;line-height:1.5;color:var(--text); width: 100%;} .options{display:flex;flex-direction:column;gap:8px;}
+.option{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);cursor:pointer;transition:all 0.15s;font-size:0.875rem;color:var(--text);}
+.option:hover{border-color:var(--primary);background:var(--primary-light);} .option.selected{border-color:var(--primary);background:var(--primary-light);font-weight:500;}
+.option.correct{border-color:var(--success);background:var(--success-light);color:#065f46;} .option.wrong{border-color:var(--error);background:var(--error-light);color:#7f1d1d;}
+.option.show-correct{border-color:var(--success);background:var(--success-light);color:#065f46;} .option input[type=radio]{accent-color:var(--primary);width:16px;height:16px;flex-shrink:0;cursor:pointer;}
+.option-label{flex:1;line-height:1.4;} .option-badge{font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:6px;margin-left:auto;flex-shrink:0;}
+.badge-correct{background:#d1fae5;color:#065f46;} .badge-wrong{background:#fee2e2;color:#7f1d1d;} .unanswered-mark{border-color:var(--warning)!important;background:var(--warning-light)!important;}
+.score-box{text-align:center;padding:32px 24px;background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-lg);margin-bottom:20px;}
+.score-circle{width:100px;height:100px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;border:4px solid;}
+.score-circle.excellent{border-color:var(--success);background:var(--success-light);} .score-circle.good{border-color:var(--primary);background:var(--primary-light);}
+.score-circle.average{border-color:var(--warning);background:var(--warning-light);} .score-circle.poor{border-color:var(--error);background:var(--error-light);}
+.score-num{font-size:1.6rem;font-weight:700;} .score-denom{font-size:0.78rem;font-weight:500;color:var(--text-muted);} .score-box h2{font-size:1.2rem;margin-bottom:6px;} .score-box p{font-size:0.85rem;color:var(--text-muted);}
+.mark-pill{display:inline-flex;align-items:center;gap:8px;background:#eef2ff;border:1px solid #c7d2fe;border-radius:20px;padding:8px 18px;font-size:0.88rem;color:#3730a3;font-weight:600;margin-top:14px;}
+.submit-area{text-align:center;} .submit-note{font-size:0.8rem;color:var(--text-muted);margin-top:10px;}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);z-index:999;padding:12px 22px;border-radius:24px;font-weight:600;font-size:0.875rem;color:#fff;box-shadow:var(--shadow-lg);transition:transform 0.35s cubic-bezier(0.175,0.885,0.32,1.275);display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);} .toast.s{background:#059669;} .toast.e{background:#dc2626;} .hidden{display:none!important;}
+.exam-progress{font-size:0.8rem;color:var(--text-muted);text-align:right;margin-bottom:12px;} .exam-progress span{color:var(--primary);font-weight:600;}
+@media(max-width:480px){.card{padding:20px 18px;}}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div class="page">
+  <div class="exam-header">
+    <div class="exam-logo"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+    <h1>${name}</h1>
+    <p>Date: ${date} | Deadline: ${deadline}</p>
+    <div class="status-pill"><span class="status-dot"></span> Connected to Google Sheets</div>
+  </div>
+
+  <div class="card" id="identityCard">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Student Identity
+      <span class="step-badge">Step 1</span>
+    </div>
+
+    <div class="form-group">
+      <label for="nameSelect">Your Name <span class="required">*</span></label>
+      <div class="input-wrap">
+        <svg class="input-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <select id="nameSelect">
+          <option value="">— Select your name —</option>
+          <option value="Nayeem Islam Nishad">1. Nayeem Islam Nishad</option>
+          <option value="Kawser Ahmed">2. Kawser Ahmed</option>
+          <option value="Siddat Raj">3. Siddat Raj</option>
+        </select>
+        <svg class="select-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </div>
+
+    <div class="form-group" id="pinGroup" style="display:none;">
+      <label for="pinInput">Exam PIN <span class="required">*</span></label>
+      <div class="input-wrap">
+        <svg class="input-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <input type="password" id="pinInput" placeholder="Enter your PIN" maxlength="10" autocomplete="off">
+      </div>
+      <div class="pin-hint">Enter the PIN assigned to you by your instructor.</div>
+      <div class="pin-error" id="pinError">Incorrect PIN. Please try again.</div>
+    </div>
+
+    <div class="form-group hidden" id="regDisplay">
+      <label>Registration Number</label>
+      <div class="input-wrap">
+        <svg class="input-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="8" x2="17" y2="8"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="7" y1="16" x2="13" y2="16"/></svg>
+        <input type="text" id="regInput" readonly>
+      </div>
+    </div>
+
+    <button type="button" class="btn btn-primary hidden" id="verifyBtn" onclick="verifyPin()">
+      <svg class="btn-icon" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span class="btn-label">Verify & Start Exam</span>
+      <span class="spinner"></span>
+    </button>
+  </div>
+
+  <div id="examSection" class="hidden">
+    <div class="info-banner">
+      <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <span>Identity verified — Good luck, <strong id="studentName2"></strong>!</span>
+    </div>
+
+    <div class="timer-bar">
+      <span class="timer-label">Time Remaining</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="timer-val" id="timerVal">--:--</span>
+    </div>
+
+    <div class="exam-progress">Answered: <span id="answeredCount">0</span> / <span id="totalCountDisplay"></span></div>
+
+    <div id="questionsContainer"></div>
+
+    <div class="submit-area">
+      <button type="button" class="btn btn-primary" onclick="submitExam()" style="max-width:320px;margin:0 auto;">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Submit Exam
+      </button>
+      <p class="submit-note">Once submitted, you cannot change your answers.</p>
+    </div>
+  </div>
+
+  <div id="resultsSection" class="hidden">
+    <div class="score-box" id="scoreBox">
+      <div class="score-circle" id="scoreCircle">
+        <span class="score-num" id="scoreNum"></span>
+        <span class="score-denom" id="scoreDenomDisplay"></span>
+      </div>
+      <h2 id="scoreTitle"></h2>
+      <p id="scoreMsg"></p>
+      <div class="mark-pill">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Obtained Mark: <strong id="obtainedMark"></strong> / 100
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Answer Review
+      </div>
+      <div id="reviewContainer"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKq5mdwGFoMr2nsGRYnqp8_O0eKehH_eFplii4bupNl8AILErwqkoqh8_6Rmbg6bap3g/exec';
+const STUDENTS = {
+  'Nayeem Islam Nishad': { pin: '1234', reg: 'REG-2024-001' },
+  'Kawser Ahmed':        { pin: '5678', reg: 'REG-2024-002' },
+  'Siddat Raj':          { pin: '9012', reg: 'REG-2024-003' }
+};
+
+const TOTAL_TIME = ${totalTimeSeconds}; 
+const QUESTIONS = ${questionsJSON};
+
+let timerInterval = null, timeLeft = TOTAL_TIME;
+let currentStudent = null, answers = new Array(QUESTIONS.length).fill(null);
+let submitted = new Set(), examActive = false;
+
+const $ = id => document.getElementById(id);
+
+document.addEventListener("DOMContentLoaded", () => {
+    $('totalCountDisplay').textContent = QUESTIONS.length;
+    $('scoreDenomDisplay').textContent = "/" + QUESTIONS.length;
+});
+
+function showToast(msg, type='s') {
+  const t = $('toast');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+$('nameSelect').addEventListener('change', function() {
+  const v = this.value;
+  $('pinGroup').style.display = v ? 'block' : 'none';
+  $('pinInput').value = '';
+  $('pinError').classList.remove('show');
+  $('regDisplay').classList.add('hidden');
+  $('verifyBtn').classList.toggle('hidden', !v);
+});
+
+$('pinInput').addEventListener('keydown', e => { if(e.key==='Enter') verifyPin(); });
+
+function verifyPin() {
+  const name = $('nameSelect').value;
+  const pin  = $('pinInput').value.trim();
+  if (!name || !pin) { showToast('Please select a name and enter PIN.', 'e'); return; }
+
+  const btn = $('verifyBtn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+
+    const data = STUDENTS[name];
+    if (!data || pin !== data.pin) {
+      $('pinError').classList.add('show');
+      $('pinInput').value = '';
+      $('pinInput').focus();
+      showToast('Incorrect PIN. Try again.', 'e');
+      return;
+    }
+    $('pinError').classList.remove('show');
+    $('regInput').value = data.reg;
+    $('regDisplay').classList.remove('hidden');
+    currentStudent = { name, reg: data.reg };
+
+    setTimeout(() => startExam(), 600);
+  }, 700);
+}
+
+function startExam() {
+  if (submitted.has(currentStudent.name)) {
+    showToast('You have already submitted this exam.', 'e');
+    return;
+  }
+  $('identityCard').style.opacity = '0.5';
+  $('identityCard').style.pointerEvents = 'none';
+  $('examSection').classList.remove('hidden');
+  $('studentName2').textContent = currentStudent.name;
+  answers = new Array(QUESTIONS.length).fill(null);
+  examActive = true;
+  renderQuestions();
+  startTimer();
+  window.scrollTo({top: $('examSection').offsetTop - 20, behavior:'smooth'});
+  if (window.MathJax) { MathJax.typesetPromise(); }
+}
+
+function renderQuestions() {
+  const c = $('questionsContainer');
+  c.innerHTML = '';
+  QUESTIONS.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'question-card';
+    div.id = 'qcard-' + qi;
+    div.innerHTML = \`
+      <div class="q-header">
+        <div class="q-num">\${qi+1}</div>
+        <div class="q-text">\${q.q}</div>
+      </div>
+      <div class="options" id="opts-\${qi}">
+        \${q.opts.map((o,oi)=>\`
+          <label class="option" id="opt-\${qi}-\${oi}" onclick="selectOption(\${qi},\${oi})">
+            <input type="radio" name="q\${qi}" value="\${oi}">
+            <span class="option-label">\${String.fromCharCode(65+oi)}. \${o}</span>
+          </label>\`).join('')}
+      </div>\`;
+    c.appendChild(div);
+  });
+}
+
+function selectOption(qi, oi) {
+  if (!examActive) return;
+  answers[qi] = oi;
+  const opts = document.querySelectorAll(\`#opts-\${qi} .option\`);
+  opts.forEach((el,i) => el.classList.toggle('selected', i===oi));
+  updateAnsweredCount();
+}
+
+function updateAnsweredCount() {
+  $('answeredCount').textContent = answers.filter(a=>a!==null).length;
+}
+
+function startTimer() {
+  timeLeft = TOTAL_TIME;
+  updateTimer();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimer();
+    if (timeLeft <= 0) { clearInterval(timerInterval); submitExam(true); }
+  }, 1000);
+}
+
+function updateTimer() {
+  const m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+  const s = (timeLeft%60).toString().padStart(2,'0');
+  const tv = $('timerVal'), pf = $('progressFill');
+  tv.textContent = \`\${m}:\${s}\`;
+  const pct = (timeLeft/TOTAL_TIME)*100;
+  pf.style.width = pct + '%';
+  const danger = timeLeft <= 60, warn = timeLeft <= 300;
+  tv.className = 'timer-val' + (danger?' danger':warn?' warn':'');
+  pf.className = 'progress-fill' + (danger?' danger':warn?' warn':'');
+}
+
+function submitExam(auto=false) {
+  if (!examActive) return;
+  const unanswered = answers.filter(a=>a===null).length;
+  if (!auto && unanswered > 0) {
+    const ok = confirm(\`You have \${unanswered} unanswered question(s). Submit anyway?\`);
+    if (!ok) {
+      QUESTIONS.forEach((_,i)=>{if(answers[i]===null) $('qcard-'+i).querySelector('.options').classList.add('unanswered-mark');});
+      return;
+    }
+  }
+  clearInterval(timerInterval);
+  examActive = false;
+  submitted.add(currentStudent.name);
+
+  let score = 0;
+  QUESTIONS.forEach((q,i)=>{ if(answers[i]===q.ans) score++; });
+  const mark = Math.round((score/QUESTIONS.length)*100);
+
+  showResults(score, mark);
+  sendData(currentStudent.name, currentStudent.reg, mark);
+}
+
+function showResults(score, mark) {
+  $('examSection').classList.add('hidden');
+  $('resultsSection').classList.remove('hidden');
+
+  $('scoreNum').textContent = score;
+  $('obtainedMark').textContent = mark;
+
+  const sc = $('scoreCircle');
+  sc.className = 'score-circle';
+  
+  const pct = score / QUESTIONS.length;
+  if (pct >= 0.9)      { sc.classList.add('excellent'); $('scoreTitle').textContent = 'Excellent Work!'; $('scoreMsg').textContent = 'Outstanding performance.'; }
+  else if (pct >= 0.7) { sc.classList.add('good');      $('scoreTitle').textContent = 'Good Job!';      $('scoreMsg').textContent = 'Great performance. Keep it up!'; }
+  else if (pct >= 0.5) { sc.classList.add('average');   $('scoreTitle').textContent = 'Passed';         $('scoreMsg').textContent = 'You passed. Review the incorrect answers below.'; }
+  else                 { sc.classList.add('poor');       $('scoreTitle').textContent = 'Needs Improvement'; $('scoreMsg').textContent = 'Keep studying. Review the correct answers below.'; }
+
+  renderReview();
+  window.scrollTo({top: 0, behavior:'smooth'});
+  if (window.MathJax) { MathJax.typesetPromise(); }
+}
+
+function renderReview() {
+  const c = $('reviewContainer');
+  c.innerHTML = '';
+  QUESTIONS.forEach((q,qi) => {
+    const userAns = answers[qi];
+    const correct = q.ans;
+    const isRight = userAns === correct;
+
+    const div = document.createElement('div');
+    div.style.cssText = 'margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);';
+    if (qi === QUESTIONS.length-1) div.style.borderBottom = 'none';
+
+    let optsHTML = q.opts.map((o,oi)=>{
+      let cls = '';
+      if (oi === correct) cls = 'show-correct';
+      if (oi === userAns && oi !== correct) cls = 'wrong';
+      const badge = oi===correct ? '<span class="option-badge badge-correct">Correct</span>' :
+                    (oi===userAns ? '<span class="option-badge badge-wrong">Your answer</span>' : '');
+      return \`<div class="option \${cls}" style="cursor:default;">\${String.fromCharCode(65+oi)}. \${o}\${badge}</div>\`;
+    }).join('');
+
+    div.innerHTML = \`
+      <div class="q-header" style="margin-bottom:12px;">
+        <div class="q-num" style="background:\${isRight?'var(--success-light)':'var(--error-light)'};color:\${isRight?'var(--success)':'var(--error)'};">\${qi+1}</div>
+        <div class="q-text">\${q.q}</div>
+      </div>
+      <div class="options" style="gap:6px;">\${optsHTML}</div>\`;
+    c.appendChild(div);
+  });
+}
+
+async function sendData(name, reg, mark) {
+  const fd = new URLSearchParams();
+  fd.append('name', name);
+  fd.append('registration', reg);
+  fd.append('mark', mark);
+  fd.append('timestamp', new Date().toISOString());
+  try {
+    const res = await fetch(SCRIPT_URL, { method:'POST', body:fd, headers:{'Accept':'application/json'} });
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    showToast('Results saved to Google Sheets!', 's');
+  } catch(e) {
+    console.error(e);
+    showToast('Could not save to Sheets. Check script URL.', 'e');
+  }
+}
+<\/script>
+</body>
+</html>`;
+
+    const blob = new Blob([studentTemplate], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name.replace(/\s+/g, '_').toLowerCase() + '_exam.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>
+
