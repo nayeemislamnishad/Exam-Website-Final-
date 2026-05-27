@@ -10,4 +10,4 @@ website টির যা যা modification দরকার:
 
 3) design modification
 
-4) 
+4) কোনো‌‌ question skip করলে সেটার পাশে skipped ahow করবে 
