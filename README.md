@@ -10,4 +10,6 @@ website টির যা যা modification দরকার:
 
 3) design modification
 
-4) কোনো‌‌ question skip করলে সেটার পাশে skipped ahow করবে 
+4) কোনো‌‌ question skip করলে সেটার পাশে skipped ahow করবে
+
+5) পরীক্ষা চলাকালীন সময়ে page যেন‌ refresh না হতে পারে। refresh করতে permission চাইবে । পরীক্ষা চলাকালিন যদি permission দিয়ে দেয় আর page refresh হয় হয় তাহলে answer auto submit হয়ে যাবে।
