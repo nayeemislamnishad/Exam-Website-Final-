@@ -177,8 +177,8 @@ textarea { resize: vertical; min-height: 100px; }
             <div class="toolbar-grid">
                 <button type="button" class="math-btn" onclick="insertVec()">F⃗</button>
                 <button type="button" class="math-btn" onclick="insertHat()">x̂</button>
-                <button type="button" class="math-btn" onclick="insertDot()">ẋ</button>
-                <button type="button" class="math-btn" onclick="insertDDot()">ẍ</button>
+                <button type="button" class="math-btn" onclick="insertDot()">ẋ</button>
+                <button type="button" class="math-btn" onclick="insertDDot()">ẍ</button>
                 <button type="button" class="math-btn" onclick="insertBar()">x̄</button>
                 <button type="button" class="math-btn" onclick="insertOverline()">x̅</button>
             </div>
@@ -537,12 +537,22 @@ textarea { resize: vertical; min-height: 100px; }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:'Inter','Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:24px 16px;}
 h1,h2,h3{font-weight:600;} .page{max-width:680px;margin:0 auto;}
-.exam-header{text-align:center;margin-bottom:32px;padding:32px 24px;background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);}
-.exam-logo{width:52px;height:52px;background:var(--primary-light);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;}
-.exam-logo svg{width:26px;height:26px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.exam-header h1{font-size:1.5rem;color:var(--text);margin-bottom:6px;} .exam-header p{font-size:0.875rem;color:var(--text-muted);}
+
+/* ── (1) NN Platform Branding Header ── */
+.nn-platform-header{text-align:center;padding:28px 24px 22px;background:linear-gradient(135deg,#1e1b4b 0%,#3730a3 45%,#4f46e5 100%);border-radius:var(--radius);margin-bottom:6px;box-shadow:0 8px 32px rgba(79,70,229,0.35);position:relative;overflow:hidden;}
+.nn-platform-header::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none;}
+.nn-platform-header::after{content:'';position:absolute;bottom:-50px;left:-30px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none;}
+.nn-logo-wrap{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:8px;}
+.nn-logo-icon{width:48px;height:48px;background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.3);border-radius:14px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.nn-logo-icon svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.nn-title{font-size:2rem;font-weight:800;color:#fff;letter-spacing:-0.02em;text-shadow:0 2px 8px rgba(0,0,0,0.2);}
+.nn-title span{color:#a5b4fc;}
+.nn-subtitle{font-size:0.82rem;color:rgba(255,255,255,0.65);letter-spacing:0.12em;text-transform:uppercase;font-weight:500;margin-bottom:10px;}
+.nn-exam-name{display:inline-block;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:6px 18px;font-size:0.88rem;color:#e0e7ff;font-weight:600;backdrop-filter:blur(4px);}
+.nn-meta{font-size:0.78rem;color:rgba(255,255,255,0.5);margin-top:8px;}
 .status-pill{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:20px;padding:5px 14px;font-size:0.78rem;color:#15803d;font-weight:500;margin-top:12px;}
 .status-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:blink 2s infinite;} @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.4;}}
+
 .card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:28px 28px;margin-bottom:20px;}
 .card-title{font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
 .card-title svg{width:18px;height:18px;stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
@@ -562,20 +572,34 @@ input[readonly]{background:#f3f4f6;color:var(--text-muted);cursor:not-allowed;} 
 .btn.loading .spinner{display:block;} .btn.loading .btn-label{display:none;} .btn.loading .btn-icon{display:none;} @keyframes spin{to{transform:rotate(360deg);}}
 .info-banner{display:flex;align-items:center;gap:10px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-sm);padding:12px 16px;font-size:0.85rem;color:#15803d;font-weight:500;margin-bottom:20px;}
 .info-banner svg{width:18px;height:18px;flex-shrink:0;stroke:#16a34a;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-.timer-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 18px;margin-bottom:20px;box-shadow:var(--shadow);}
+
+/* ── (4) Fixed Timer ── */
+.timer-bar{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 18px;margin-bottom:20px;box-shadow:var(--shadow-md);position:sticky;top:8px;z-index:100;}
 .timer-label{font-size:0.82rem;color:var(--text-muted);font-weight:500;} .timer-val{font-size:1.1rem;font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums;}
-.timer-val.warn{color:var(--warning);} .timer-val.danger{color:var(--error);} .progress-track{flex:1;height:6px;background:var(--border);border-radius:3px;margin:0 16px;overflow:hidden;}
+.timer-val.warn{color:var(--warning);} .timer-val.danger{color:var(--error);animation:pulse-danger 1s infinite;} @keyframes pulse-danger{0%,100%{opacity:1;}50%{opacity:0.6;}}
+.progress-track{flex:1;height:6px;background:var(--border);border-radius:3px;margin:0 16px;overflow:hidden;}
 .progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width 1s linear,background 0.3s;} .progress-fill.warn{background:var(--warning);} .progress-fill.danger{background:var(--error);}
+
 .question-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:22px 24px;margin-bottom:14px;transition:box-shadow 0.2s;}
 .question-card:hover{box-shadow:var(--shadow-md);} .q-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
 .q-num{width:30px;height:30px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--primary);flex-shrink:0;}
-.q-text{font-size:0.92rem;font-weight:500;line-height:1.5;color:var(--text); width: 100%;} .options{display:flex;flex-direction:column;gap:8px;}
-.option{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius-sm);border:1.5px solid var(--border);cursor:pointer;transition:all 0.15s;font-size:0.875rem;color:var(--text);}
-.option:hover{border-color:var(--primary);background:var(--primary-light);} .option.selected{border-color:var(--primary);background:var(--primary-light);font-weight:500;}
-.option.correct{border-color:var(--success);background:var(--success-light);color:#065f46;} .option.wrong{border-color:var(--error);background:var(--error-light);color:#7f1d1d;}
-.option.show-correct{border-color:var(--success);background:var(--success-light);color:#065f46;} .option input[type=radio]{accent-color:var(--primary);width:16px;height:16px;flex-shrink:0;cursor:pointer;}
-.option-label{flex:1;line-height:1.4;} .option-badge{font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:6px;margin-left:auto;flex-shrink:0;}
-.badge-correct{background:#d1fae5;color:#065f46;} .badge-wrong{background:#fee2e2;color:#7f1d1d;} .unanswered-mark{border-color:var(--warning)!important;background:var(--warning-light)!important;}
+.q-text{font-size:0.92rem;font-weight:500;line-height:1.5;color:var(--text); width: 100%;} .options{display:flex;flex-direction:column;gap:10px;}
+
+/* ── (3) Beautiful Option Design ── */
+.option{display:flex;align-items:center;gap:0;padding:0;border-radius:10px;border:2px solid var(--border);cursor:pointer;transition:all 0.18s;font-size:0.875rem;color:var(--text);overflow:hidden;background:var(--card);}
+.option:hover{border-color:var(--primary);box-shadow:0 2px 8px rgba(79,70,229,0.12);transform:translateY(-1px);}
+.option.selected{border-color:var(--primary);box-shadow:0 2px 10px rgba(79,70,229,0.18);transform:translateY(-1px);}
+.option-letter{width:42px;min-width:42px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--border);font-weight:800;font-size:0.85rem;color:var(--text-muted);transition:all 0.18s;border-right:2px solid var(--border);flex-shrink:0;}
+.option:hover .option-letter{background:var(--primary);color:#fff;border-right-color:var(--primary);}
+.option.selected .option-letter{background:var(--primary);color:#fff;border-right-color:var(--primary);}
+.option input[type=radio]{display:none;}
+.option-label{flex:1;line-height:1.4;padding:10px 14px;} .option-badge{font-size:0.7rem;font-weight:700;padding:2px 7px;border-radius:6px;margin-right:10px;flex-shrink:0;}
+.badge-correct{background:#d1fae5;color:#065f46;} .badge-wrong{background:#fee2e2;color:#7f1d1d;} .badge-skipped{background:#fef3c7;color:#92400e;}
+.option.correct{border-color:var(--success);background:#f0fdf4;} .option.correct .option-letter{background:var(--success);color:#fff;border-right-color:var(--success);}
+.option.wrong{border-color:var(--error);background:#fff5f5;} .option.wrong .option-letter{background:var(--error);color:#fff;border-right-color:var(--error);}
+.option.show-correct{border-color:var(--success);background:#f0fdf4;} .option.show-correct .option-letter{background:var(--success);color:#fff;border-right-color:var(--success);}
+.unanswered-mark{border-color:var(--warning)!important;background:var(--warning-light)!important;}
+
 .score-box{text-align:center;padding:32px 24px;background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-lg);margin-bottom:20px;}
 .score-circle{width:100px;height:100px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 20px;border:4px solid;}
 .score-circle.excellent{border-color:var(--success);background:var(--success-light);} .score-circle.good{border-color:var(--primary);background:var(--primary-light);}
@@ -586,7 +610,20 @@ input[readonly]{background:#f3f4f6;color:var(--text-muted);cursor:not-allowed;} 
 .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);z-index:999;padding:12px 22px;border-radius:24px;font-weight:600;font-size:0.875rem;color:#fff;box-shadow:var(--shadow-lg);transition:transform 0.35s cubic-bezier(0.175,0.885,0.32,1.275);display:flex;align-items:center;gap:8px;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);} .toast.s{background:#059669;} .toast.e{background:#dc2626;} .hidden{display:none!important;}
 .exam-progress{font-size:0.8rem;color:var(--text-muted);text-align:right;margin-bottom:12px;} .exam-progress span{color:var(--primary);font-weight:600;}
-@media(max-width:480px){.card{padding:20px 18px;}}
+
+/* ── (5) Review legend ── */
+.review-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:0.78rem;font-weight:600;}
+.legend-dot{width:10px;height:10px;border-radius:50%;}
+.legend-dot.correct{background:var(--success);} .legend-dot.wrong{background:var(--error);} .legend-dot.skipped{background:var(--warning);}
+
+/* ── (5) Skipped question styling in review ── */
+.q-status-badge{display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:700;padding:3px 10px;border-radius:12px;margin-left:8px;vertical-align:middle;}
+.q-status-badge.correct-badge{background:#d1fae5;color:#065f46;}
+.q-status-badge.wrong-badge{background:#fee2e2;color:#7f1d1d;}
+.q-status-badge.skipped-badge{background:#fef3c7;color:#92400e;}
+
+@media(max-width:480px){.card{padding:20px 18px;}.nn-title{font-size:1.5rem;}.timer-bar{flex-wrap:wrap;gap:8px;}.progress-track{width:100%;margin:4px 0;order:3;flex:unset;}}
 </style>
 </head>
 <body>
@@ -594,11 +631,15 @@ input[readonly]{background:#f3f4f6;color:var(--text-muted);cursor:not-allowed;} 
 <div class="toast" id="toast"></div>
 
 <div class="page">
-  <div class="exam-header">
-    <div class="exam-logo"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
-    <h1>${name}</h1>
-    <p>Date: ${date} | Deadline: ${deadline}</p>
-    <div class="status-pill"><span class="status-dot"></span> Connected to Google Sheets</div>
+  <div class="nn-platform-header">
+    <div class="nn-logo-wrap">
+      <div class="nn-logo-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+      <div class="nn-title">NN <span>Platform</span></div>
+    </div>
+    <div class="nn-subtitle">Online Examination System</div>
+    <div class="nn-exam-name">${name}</div>
+    <div class="nn-meta">Date: ${date} &nbsp;|&nbsp; Deadline: ${deadline}</div>
+    <div class="status-pill" style="margin-top:14px;"><span class="status-dot"></span> Connected to Google Sheets</div>
   </div>
 
   <div class="card" id="identityCard">
@@ -698,7 +739,8 @@ input[readonly]{background:#f3f4f6;color:var(--text-muted);cursor:not-allowed;} 
 </div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyKq5mdwGFoMr2nsGRYnqp8_O0eKehH_eFplii4bupNl8AILErwqkoqh8_6Rmbg6bap3g/exec';
+const SCRIPT_URL_1 = 'https://script.google.com/macros/s/AKfycbxg6e3CQHtWqVaN7odfVvfHkMZWVjYgG2k4wt6fsJBxIKNRabIcRWUtazHEKqi6nt_gJQ/exec';
+const SCRIPT_URL_2 = 'https://script.google.com/macros/s/AKfycbzsWDuemgVEae1OCpMIuyn7-mbBVl_dOoi-g6Hi8fC5BO698qhccHfbVbL11jAfdRsxfw/exec';
 const STUDENTS = {
   'Nayeem Islam Nishad': { pin: '1234', reg: 'REG-2024-001' },
   'Kawser Ahmed':        { pin: '5678', reg: 'REG-2024-002' },
@@ -764,6 +806,9 @@ function verifyPin() {
     $('regDisplay').classList.remove('hidden');
     currentStudent = { name, reg: data.reg };
 
+    // Phase 1 — register in Sheet immediately with mark = ONGOING
+    registerStudent(name, data.reg);
+
     setTimeout(() => startExam(), 600);
   }, 700);
 }
@@ -773,12 +818,21 @@ function startExam() {
     showToast('You have already submitted this exam.', 'e');
     return;
   }
-  $('identityCard').style.opacity = '0.5';
-  $('identityCard').style.pointerEvents = 'none';
+  $('identityCard').style.display = 'none';
   $('examSection').classList.remove('hidden');
   $('studentName2').textContent = currentStudent.name;
   answers = new Array(QUESTIONS.length).fill(null);
   examActive = true;
+
+  // Refresh warning only — no localStorage needed
+  window._beforeUnloadHandler = function(e) {
+    if (!examActive) return;
+    e.preventDefault();
+    e.returnValue = '⚠️ পরীক্ষা চলছে! Refresh করলে আপনার পরীক্ষা বাতিল হয়ে যাবে।';
+    return e.returnValue;
+  };
+  window.addEventListener('beforeunload', window._beforeUnloadHandler);
+
   renderQuestions();
   startTimer();
   window.scrollTo({top: $('examSection').offsetTop - 20, behavior:'smooth'});
@@ -801,7 +855,8 @@ function renderQuestions() {
         \${q.opts.map((o,oi)=>\`
           <label class="option" id="opt-\${qi}-\${oi}" onclick="selectOption(\${qi},\${oi})">
             <input type="radio" name="q\${qi}" value="\${oi}">
-            <span class="option-label">\${String.fromCharCode(65+oi)}. \${o}</span>
+            <div class="option-letter">\${String.fromCharCode(65+oi)}</div>
+            <span class="option-label">\${o}</span>
           </label>\`).join('')}
       </div>\`;
     c.appendChild(div);
@@ -854,6 +909,7 @@ function submitExam(auto=false) {
   }
   clearInterval(timerInterval);
   examActive = false;
+  if (window._beforeUnloadHandler) { window.removeEventListener('beforeunload', window._beforeUnloadHandler); }
   submitted.add(currentStudent.name);
 
   let score = 0;
@@ -861,7 +917,7 @@ function submitExam(auto=false) {
   const mark = Math.round((score/QUESTIONS.length)*100);
 
   showResults(score, mark);
-  sendData(currentStudent.name, currentStudent.reg, mark);
+  sendMark(currentStudent.name, currentStudent.reg, mark);
 }
 
 function showResults(score, mark) {
@@ -888,46 +944,94 @@ function showResults(score, mark) {
 function renderReview() {
   const c = $('reviewContainer');
   c.innerHTML = '';
+
+  // Legend
+  const legend = document.createElement('div');
+  legend.className = 'review-legend';
+  legend.innerHTML = \`
+    <div class="legend-item"><div class="legend-dot correct"></div> Correct</div>
+    <div class="legend-item"><div class="legend-dot wrong"></div> Wrong</div>
+    <div class="legend-item"><div class="legend-dot skipped"></div> Skipped</div>\`;
+  c.appendChild(legend);
+
   QUESTIONS.forEach((q,qi) => {
     const userAns = answers[qi];
     const correct = q.ans;
-    const isRight = userAns === correct;
+    const isSkipped = userAns === null;
+    const isRight = !isSkipped && userAns === correct;
 
     const div = document.createElement('div');
     div.style.cssText = 'margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border);';
     if (qi === QUESTIONS.length-1) div.style.borderBottom = 'none';
 
+    let statusBadge = '';
+    if (isSkipped) statusBadge = '<span class="q-status-badge skipped-badge">⏭ Skipped</span>';
+    else if (isRight) statusBadge = '<span class="q-status-badge correct-badge">✓ Correct</span>';
+    else statusBadge = '<span class="q-status-badge wrong-badge">✗ Wrong</span>';
+
+    let numBg = isSkipped ? 'var(--warning-light)' : (isRight ? 'var(--success-light)' : 'var(--error-light)');
+    let numColor = isSkipped ? 'var(--warning)' : (isRight ? 'var(--success)' : 'var(--error)');
+
     let optsHTML = q.opts.map((o,oi)=>{
       let cls = '';
-      if (oi === correct) cls = 'show-correct';
-      if (oi === userAns && oi !== correct) cls = 'wrong';
-      const badge = oi===correct ? '<span class="option-badge badge-correct">Correct</span>' :
-                    (oi===userAns ? '<span class="option-badge badge-wrong">Your answer</span>' : '');
-      return \`<div class="option \${cls}" style="cursor:default;">\${String.fromCharCode(65+oi)}. \${o}\${badge}</div>\`;
+      let letter_cls = '';
+      if (oi === correct) { cls = 'show-correct'; }
+      if (oi === userAns && oi !== correct) { cls = 'wrong'; }
+
+      const badge = oi===correct ? '<span class="option-badge badge-correct">✓ Correct</span>' :
+                    (oi===userAns && !isSkipped ? '<span class="option-badge badge-wrong">Your answer</span>' : '');
+      return \`<div class="option \${cls}" style="cursor:default;">
+        <div class="option-letter" style="\${oi===correct?'background:var(--success);color:#fff;border-right-color:var(--success);':''}  \${oi===userAns&&oi!==correct?'background:var(--error);color:#fff;border-right-color:var(--error);':''}">\${String.fromCharCode(65+oi)}</div>
+        <span class="option-label">\${o}</span>
+        \${badge}
+      </div>\`;
     }).join('');
+
+    // If skipped, show a skipped note
+    const skippedNote = isSkipped ? \`<div style="margin-top:8px;padding:8px 12px;background:#fef3c7;border:1px solid #fde68a;border-radius:8px;font-size:0.8rem;color:#92400e;font-weight:600;">⏭ You skipped this question. The correct answer is highlighted above.</div>\` : '';
 
     div.innerHTML = \`
       <div class="q-header" style="margin-bottom:12px;">
-        <div class="q-num" style="background:\${isRight?'var(--success-light)':'var(--error-light)'};color:\${isRight?'var(--success)':'var(--error)'};">\${qi+1}</div>
-        <div class="q-text">\${q.q}</div>
+        <div class="q-num" style="background:\${numBg};color:\${numColor};">\${qi+1}</div>
+        <div class="q-text">\${q.q}\${statusBadge}</div>
       </div>
-      <div class="options" style="gap:6px;">\${optsHTML}</div>\`;
+      <div class="options" style="gap:6px;">\${optsHTML}</div>
+      \${skippedNote}\`;
     c.appendChild(div);
   });
 }
 
-async function sendData(name, reg, mark) {
+// Phase 1 — called immediately after PIN verification → SCRIPT_URL_1
+// Sends all info with mark = "ONGOING"
+async function registerStudent(name, reg) {
+  const fd = new URLSearchParams();
+  fd.append('name', name);
+  fd.append('registration', reg);
+  fd.append('mark', 'ONGOING');
+  fd.append('timestamp', new Date().toISOString());
+  try {
+    await fetch(SCRIPT_URL_1, { method:'POST', mode:'no-cors', body:fd, headers:{'Content-Type':'application/x-www-form-urlencoded'} });
+    console.log('Phase 1 — Student registered:', name);
+  } catch(e) {
+    console.error('Phase 1 failed:', e);
+  }
+}
+
+// Phase 2 — called after exam submit → SCRIPT_URL_2
+// Sends all info with actual mark
+async function sendMark(name, reg, mark) {
   const fd = new URLSearchParams();
   fd.append('name', name);
   fd.append('registration', reg);
   fd.append('mark', mark);
   fd.append('timestamp', new Date().toISOString());
+  fd.append('update', 'true');
   try {
-    const res = await fetch(SCRIPT_URL, { method:'POST', body:fd, headers:{'Accept':'application/json'} });
-    if (!res.ok) throw new Error('HTTP '+res.status);
+    await fetch(SCRIPT_URL_2, { method:'POST', mode:'no-cors', body:fd, headers:{'Content-Type':'application/x-www-form-urlencoded'} });
     showToast('Results saved to Google Sheets!', 's');
+    console.log('Phase 2 — Mark submitted:', mark);
   } catch(e) {
-    console.error(e);
+    console.error('Phase 2 failed:', e);
     showToast('Could not save to Sheets. Check script URL.', 'e');
   }
 }
@@ -948,4 +1052,3 @@ async function sendData(name, reg, mark) {
 </script>
 </body>
 </html>
-
